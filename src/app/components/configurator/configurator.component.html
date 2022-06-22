@@ -12,9 +12,15 @@
   </mat-chip-list>
   <hr />
   <h2>Add Item:</h2>
+  <h5>(use comma ',' to add multiple items)</h5>
   <mat-form-field class="form-field" appearance="fill">
     <mat-label>Value</mat-label>
-    <input matInput type="text" [(ngModel)]="currentItemValue" />
+    <input
+      matInput
+      type="text"
+      (keydown.enter)="addItem()"
+      [(ngModel)]="currentItemValue"
+    />
   </mat-form-field>
   <button mat-raised-button color="primary" (click)="addItem()">Add</button>
 </mat-card>

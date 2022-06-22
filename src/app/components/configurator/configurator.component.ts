@@ -12,7 +12,13 @@ export class ConfiguratorComponent implements OnInit {
   constructor(public wheelService: WheelService) {}
 
   public addItem(): void {
-    this.wheelService.addItem(this.currentItemValue);
+    if (!this.currentItemValue) {
+      return;
+    }
+    const splitted = this.currentItemValue.split(',');
+    for (const item of splitted) {
+      this.wheelService.addItem(item.trim());
+    }
     this.currentItemValue = '';
   }
 
