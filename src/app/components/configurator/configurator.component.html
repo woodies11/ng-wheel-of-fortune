@@ -22,5 +22,14 @@
       [(ngModel)]="currentItemValue"
     />
   </mat-form-field>
-  <button mat-raised-button color="primary" (click)="addItem()">Add</button>
+  <div class="btn-group">
+    <button mat-raised-button color="primary" (click)="addItem()">Add</button>
+    <button
+      mat-stroked-button
+      color="warn"
+      (click)="this.wheelService.removeAll()"
+    >
+      Remove All
+    </button>
+  </div>
 </mat-card>

@@ -5,7 +5,14 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class WheelService {
-  private items: any[] = [];
+  private _items: any[] = [];
+  private get items(): any[] {
+    return this._items;
+  }
+  private set items(v: any[]) {
+    this._items = v;
+    this.items$.next(this._items);
+  }
   public items$ = new BehaviorSubject(this.items);
 
   private _currentWinningIndex = -1;
@@ -27,7 +34,19 @@ export class WheelService {
     return this._currentWinningIndex;
   }
 
-  constructor() {}
+  constructor() {
+    this.init();
+  }
+
+  init(): void {
+    const localStorageItems = JSON.parse(localStorage.getItem('wheelItems'));
+    if (Array.isArray(localStorageItems)) {
+      this.items = localStorageItems;
+    }
+    this.items$.subscribe((items) => {
+      localStorage.setItem('wheelItems', JSON.stringify(items));
+    });
+  }
 
   public addItem(i: any): void {
     this.items.push(i);
@@ -37,6 +56,10 @@ export class WheelService {
   public removeItem(index: number): void {
     this.items.splice(index, 1);
     this.items$.next(this.items);
+  }
+
+  public removeAll(): void {
+    this.items = [];
   }
 
   public removeWinningOption(): void {
