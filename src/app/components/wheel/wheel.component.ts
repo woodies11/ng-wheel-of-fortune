@@ -70,11 +70,6 @@ export class WheelComponent implements AfterViewInit {
     this.rotationDegCSS = `rotate(${this.currentAngleDeg}deg)`;
 
     this.winningValue = this.wheelService.items$.value[winningItemIndex];
-    console.log({
-      wining: this.winningValue,
-      suspendRotation: suspendRotationDeg,
-      sliceAngleDeg,
-    });
     if (this.dialogDelayTimer) {
       clearTimeout(this.dialogDelayTimer);
     }

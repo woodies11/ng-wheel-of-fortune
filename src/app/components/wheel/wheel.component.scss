@@ -1,7 +1,8 @@
 #wheel {
   transition-duration: 8s;
-  transition-timing-function: cubic-bezier(0.51, 0.05, 0, 0.99);
+  transition-timing-function: cubic-bezier(0.45, 0.25, 0, 1);
   display: block;
+  cursor: pointer;
 }
 
 .wheel-container {
@@ -51,4 +52,11 @@
       }
     }
   }
+}
+
+h2 {
+  width: 100%;
+  text-align: center;
+  margin-top: 2em;
+  font-weight: 500;
 }

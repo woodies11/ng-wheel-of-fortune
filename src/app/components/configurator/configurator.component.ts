@@ -9,7 +9,21 @@ import { WheelService } from 'src/app/services/wheel.service';
 export class ConfiguratorComponent implements OnInit {
   public currentItemValue = '';
 
+  public showRemoveAllConfirm = false;
+
   constructor(public wheelService: WheelService) {}
+
+  public removeAllClicked(): void {
+    this.showRemoveAllConfirm = true;
+    setTimeout(() => {
+      this.showRemoveAllConfirm = false;
+    }, 2000);
+  }
+
+  public removeAllConfirmClicked(): void {
+    this.showRemoveAllConfirm = false;
+    this.wheelService.removeAll();
+  }
 
   public addItem(): void {
     if (!this.currentItemValue) {

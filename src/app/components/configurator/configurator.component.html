@@ -25,11 +25,20 @@
   <div class="btn-group">
     <button mat-raised-button color="primary" (click)="addItem()">Add</button>
     <button
+      *ngIf="!showRemoveAllConfirm"
       mat-stroked-button
       color="warn"
-      (click)="this.wheelService.removeAll()"
+      (click)="removeAllClicked()"
     >
       Remove All
+    </button>
+    <button
+      *ngIf="showRemoveAllConfirm"
+      mat-raised-button
+      color="warn"
+      (click)="removeAllConfirmClicked()"
+    >
+      Confirm Remove All
     </button>
   </div>
 </mat-card>
