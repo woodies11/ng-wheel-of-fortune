@@ -95,7 +95,7 @@ export class WheelService {
   public removeItem(index: number): void {
     const deleted = this.items.splice(index, 1);
     this.items$.next(this.items);
-    this.recentlyRemovedItems.push(deleted);
+    this.recentlyRemovedItems.push(...deleted);
     this.recentlyRemovedItems$.next(this.recentlyRemovedItems);
   }
 
@@ -123,7 +123,7 @@ export class WheelService {
       1
     );
     this.recentlyRemovedItems$.next(this.recentlyRemovedItems);
-    this.addItem(toAddBack);
+    toAddBack.forEach((it) => this.addItem(it));
   }
 
   public addAllRecentlyRemovedBack(): void {
