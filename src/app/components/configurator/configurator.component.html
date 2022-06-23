@@ -1,44 +1,84 @@
-<mat-card>
-  <mat-card-title>Configure</mat-card-title>
-  <h2>List:</h2>
-  <mat-chip-list #chipList>
-    <mat-chip
-      #chipList
-      *ngFor="let item of this.wheelService.items$ | async; let i = index"
-      (removed)="removeItem(i)"
-      >{{ item }}
-      <mat-icon matChipRemove>cancel</mat-icon>
-    </mat-chip>
-  </mat-chip-list>
-  <hr />
-  <h2>Add Item:</h2>
-  <h5>(use comma ',' to add multiple items)</h5>
-  <mat-form-field class="form-field" appearance="fill">
-    <mat-label>Value</mat-label>
-    <input
-      matInput
-      type="text"
-      (keydown.enter)="addItem()"
-      [(ngModel)]="currentItemValue"
-    />
-  </mat-form-field>
-  <div class="btn-group">
-    <button mat-raised-button color="primary" (click)="addItem()">Add</button>
-    <button
-      *ngIf="!showRemoveAllConfirm"
-      mat-stroked-button
-      color="warn"
-      (click)="removeAllClicked()"
-    >
-      Remove All
-    </button>
-    <button
-      *ngIf="showRemoveAllConfirm"
-      mat-raised-button
-      color="warn"
-      (click)="removeAllConfirmClicked()"
-    >
-      Confirm Remove All
-    </button>
-  </div>
-</mat-card>
+<div class="configurator-container">
+  <mat-card>
+    <mat-card-title>Configure</mat-card-title>
+    <h2>Current List:</h2>
+    <mat-chip-list #chipList>
+      <mat-chip
+        #chipList
+        class="active-chips"
+        *ngFor="let item of this.wheelService.items$ | async; let i = index"
+        (removed)="removeItem(i)"
+        >{{ item }}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+    </mat-chip-list>
+    <div class="add-item-section">
+      <h2>Add Item:</h2>
+      <h5>(use comma ',' to add multiple items)</h5>
+      <mat-form-field class="form-field" appearance="fill">
+        <mat-label>Value</mat-label>
+        <input
+          matInput
+          type="text"
+          (keydown.enter)="addItem()"
+          [(ngModel)]="currentItemValue"
+        />
+      </mat-form-field>
+      <div class="btn-group">
+        <button mat-raised-button color="primary" (click)="addItem()">
+          Add
+        </button>
+        <button
+          *ngIf="!showRemoveAllConfirm"
+          mat-stroked-button
+          color="warn"
+          (click)="removeAllClicked()"
+        >
+          Remove All
+        </button>
+        <button
+          *ngIf="showRemoveAllConfirm"
+          mat-raised-button
+          color="warn"
+          (click)="removeAllConfirmClicked()"
+        >
+          Confirm Remove All
+        </button>
+      </div>
+    </div>
+  </mat-card>
+
+  <ng-container
+    *ngIf="
+      this.wheelService.recentlyRemovedItems$ | async as recentlyRemovedItems
+    "
+  >
+    <mat-card *ngIf="recentlyRemovedItems.length > 0">
+      <mat-card-title>Recently Removed</mat-card-title>
+      <h5>Click the chip to add it back.</h5>
+      <div class="recently-removed-list">
+        <mat-chip-list #recentlyRemovedChipList>
+          <mat-chip
+            #recentlyRemovedChipList
+            class="recently-removed-chips"
+            *ngFor="let item of recentlyRemovedItems; let i = index"
+            (click)="this.wheelService.addBackFromRecentlyRemoved(i)"
+            (removed)="removeItem(i)"
+            >{{ item }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-list>
+      </div>
+      <div class="btn-group">
+        <button
+          *ngIf="!showRemoveAllConfirm"
+          mat-stroked-button
+          color="warn"
+          (click)="this.wheelService.removeAllRecentlyRemoved()"
+        >
+          Clear Recently Removed
+        </button>
+      </div>
+    </mat-card>
+  </ng-container>
+</div>

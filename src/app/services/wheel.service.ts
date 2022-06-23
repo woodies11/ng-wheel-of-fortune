@@ -11,9 +11,19 @@ export class WheelService {
   }
   private set items(v: any[]) {
     this._items = v;
-    this.items$.next(this._items);
+    this.items$.next(this.items);
   }
   public items$ = new BehaviorSubject(this.items);
+
+  private _recentlyRemovedItems: any[] = [];
+  private get recentlyRemovedItems(): any[] {
+    return this._recentlyRemovedItems;
+  }
+  private set recentlyRemovedItems(v: any[]) {
+    this._recentlyRemovedItems = v;
+    this.recentlyRemovedItems$.next(this.recentlyRemovedItems);
+  }
+  public recentlyRemovedItems$ = new BehaviorSubject(this.recentlyRemovedItems);
 
   private _currentWinningIndex = -1;
 
@@ -54,11 +64,15 @@ export class WheelService {
   }
 
   public removeItem(index: number): void {
-    this.items.splice(index, 1);
+    const deleted = this.items.splice(index, 1);
     this.items$.next(this.items);
+    this.recentlyRemovedItems.push(deleted);
+    this.recentlyRemovedItems$.next(this.recentlyRemovedItems);
   }
 
   public removeAll(): void {
+    this.recentlyRemovedItems.push(...this.items);
+    this.recentlyRemovedItems$.next(this.recentlyRemovedItems);
     this.items = [];
   }
 
@@ -67,5 +81,19 @@ export class WheelService {
       return;
     }
     this.removeItem(this.currentWinningIndex);
+  }
+
+  public addBackFromRecentlyRemoved(indexOfRecentlyRemovedArray: number): void {
+    const toAddBack = this._recentlyRemovedItems.splice(
+      indexOfRecentlyRemovedArray,
+      1
+    );
+    this.recentlyRemovedItems$.next(this.recentlyRemovedItems);
+    this.addItem(toAddBack);
+  }
+
+  public removeAllRecentlyRemoved(): void {
+    this.recentlyRemovedItems = [];
+    this.recentlyRemovedItems$.next(this.recentlyRemovedItems);
   }
 }

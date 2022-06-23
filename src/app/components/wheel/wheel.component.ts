@@ -19,6 +19,7 @@ import { ResultDialogComponent } from '../result-dialog/result-dialog.component'
 export class WheelComponent implements AfterViewInit {
   public rotationDegCSS = '0deg';
   public winningValue = '';
+  public isRotating = false;
   private currentAngleDeg = 0;
   private dialogDelayTimer: any;
 
@@ -53,6 +54,8 @@ export class WheelComponent implements AfterViewInit {
       });
     }
 
+    this.isRotating = true;
+
     const numberOfRotation = Math.floor(5 + 10 * Math.random());
     const winningItemIndex = this.wheelService.randomizeWinningIndex();
     const coef = this.currentAngleDeg > 0 ? -1 : 1;
@@ -75,10 +78,12 @@ export class WheelComponent implements AfterViewInit {
     }
     this.dialogDelayTimer = setTimeout(() => {
       this.matDialog.open(ResultDialogComponent);
+      this.isRotating = false;
       confetti({
-        particleCount: 300,
-        spread: 800,
-        origin: { y: 0 },
+        particleCount: this.randomInRange(400, 800),
+        spread: this.randomInRange(200, 500),
+        angle: this.randomInRange(55, 125),
+        origin: { y: 0.5 },
       });
     }, 8200);
   }
@@ -93,6 +98,10 @@ export class WheelComponent implements AfterViewInit {
     this.wheelService.items$.subscribe((items) => {
       this.redrawCanvas();
     });
+  }
+
+  private randomInRange(min: number, max: number): number {
+    return Math.random() * (max - min) + min;
   }
 
   private redrawCanvas(): void {
