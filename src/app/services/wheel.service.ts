@@ -53,8 +53,18 @@ export class WheelService {
     if (Array.isArray(localStorageItems)) {
       this.items = localStorageItems;
     }
-    this.items$.subscribe((items) => {
-      localStorage.setItem('wheelItems', JSON.stringify(items));
+    this.items$.subscribe((its) => {
+      localStorage.setItem('wheelItems', JSON.stringify(its));
+    });
+
+    const localStorageRecentlyRemovedItems = JSON.parse(
+      localStorage.getItem('recentlyRemovedItems')
+    );
+    if (Array.isArray(localStorageRecentlyRemovedItems)) {
+      this.recentlyRemovedItems = localStorageRecentlyRemovedItems;
+    }
+    this.recentlyRemovedItems$.subscribe((rrits) => {
+      localStorage.setItem('recentlyRemovedItems', JSON.stringify(rrits));
     });
   }
 
