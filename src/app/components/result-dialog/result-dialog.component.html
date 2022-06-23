@@ -1,8 +1,15 @@
 <h1 mat-dialog-title>Result</h1>
 <div mat-dialog-content>{{ this.wheelService.currentWinningValue }}</div>
 <div mat-dialog-actions>
-  <button mat-button mat-dialog-close (click)="removeWinningOption()">
+  <button
+    mat-stroked-button
+    color="warn"
+    mat-dialog-close
+    (click)="removeWinningOption()"
+  >
     Remove Option
   </button>
-  <button mat-button mat-dialog-close cdkFocusInitial>Close</button>
+  <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial>
+    Close
+  </button>
 </div>
