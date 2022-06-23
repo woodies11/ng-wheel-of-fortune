@@ -8,9 +8,9 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import confetti from 'canvas-confetti';
 import { WheelService } from 'src/app/services/wheel.service';
 import { ResultDialogComponent } from '../result-dialog/result-dialog.component';
-
 @Component({
   selector: 'app-wheel',
   templateUrl: './wheel.component.html',
@@ -75,6 +75,11 @@ export class WheelComponent implements AfterViewInit {
     }
     this.dialogDelayTimer = setTimeout(() => {
       this.matDialog.open(ResultDialogComponent);
+      confetti({
+        particleCount: 300,
+        spread: 800,
+        origin: { y: 0 },
+      });
     }, 8200);
   }
 
