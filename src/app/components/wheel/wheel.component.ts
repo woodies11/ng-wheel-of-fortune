@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { WheelService } from 'src/app/services/wheel.service';
 
 @Component({
@@ -7,61 +14,113 @@ import { WheelService } from 'src/app/services/wheel.service';
   styleUrls: ['./wheel.component.scss'],
 })
 export class WheelComponent implements AfterViewInit {
-  @ViewChild('thewheel') theWheelRef: ElementRef<HTMLCanvasElement>;
+  public rotationDegCSS = '0deg';
+  public winningValue = '';
+  private currentAngleDeg = 0;
 
+  @ViewChild('thewheel') theWheelRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('wheelcontainer') wheelContainerDevRef: ElementRef<HTMLDivElement>;
   private ctx: CanvasRenderingContext2D;
 
-  constructor(public wheelService: WheelService) {}
+  constructor(public wheelService: WheelService, private renderer: Renderer2) {}
 
   private colors = ['#f82', '#0bf', '#fb0', '#0fb', '#b0f', '#f0b'];
+
+  rotate(): void {
+    const numOfItems = this.wheelService.items$.value.length;
+
+    if (numOfItems < 2) {
+      return;
+    }
+
+    const numberOfRotation = Math.floor(5 + 10 * Math.random());
+    const winningItemIndex = Math.floor(numOfItems * Math.random());
+    const coef = this.currentAngleDeg > 0 ? -1 : 1;
+    const meaninglessRotationDeg = coef * 360 * numberOfRotation;
+    const sliceAngleDeg = 360 / numOfItems;
+
+    const suspendRotationDeg =
+      (Math.random() >= 0.5 ? -1 : 1) *
+      Math.floor(0.5 * sliceAngleDeg * Math.random());
+
+    this.currentAngleDeg =
+      meaninglessRotationDeg +
+      360 * ((numOfItems - winningItemIndex) / numOfItems) +
+      suspendRotationDeg;
+    this.rotationDegCSS = `rotate(${this.currentAngleDeg}deg)`;
+
+    this.winningValue = this.wheelService.items$.value[winningItemIndex];
+    console.log({
+      wining: this.winningValue,
+      suspendRotation: suspendRotationDeg,
+      sliceAngleDeg,
+    });
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.redrawCanvas();
+  }
 
   ngAfterViewInit(): void {
     this.ctx = this.theWheelRef.nativeElement.getContext('2d');
     this.wheelService.items$.subscribe((items) => {
-      const numOfItems = items.length;
-      const diameter = this.ctx.canvas.width;
-      const radius = diameter / 2;
-      const sliceAngleRad = (2 * Math.PI) / numOfItems;
-      console.log({
-        numOfItems,
-        diameter,
-        radius,
-        sliceAngleRad,
-      });
-      items.forEach((item, index) => {
-        const startingAngleRad = sliceAngleRad * index;
-        const endAngleRad = startingAngleRad + sliceAngleRad;
-        this.ctx.save();
+      this.redrawCanvas();
+    });
+  }
 
-        // Draw a slice
-        // ---------------------------------------------------
-        this.ctx.beginPath();
+  private redrawCanvas(): void {
+    if (!this.ctx) {
+      return;
+    }
 
-        // prevent the case where the last item added have the same
-        // color as the first item
-        if (index > 0 && index % this.colors.length === 0) {
-          this.ctx.fillStyle = '#bf0';
-        } else {
-          this.ctx.fillStyle = this.colors[index % this.colors.length];
-        }
-        // move cursor to center of circle
-        this.ctx.moveTo(radius, radius);
-        this.ctx.arc(radius, radius, radius, startingAngleRad, endAngleRad);
-        // move back to center
-        this.ctx.lineTo(radius, radius);
-        this.ctx.fill();
+    const containerWidth = this.wheelContainerDevRef.nativeElement.offsetWidth;
+    const wheelDiameter = containerWidth * 0.8;
+    this.renderer.setAttribute(this.ctx.canvas, 'width', wheelDiameter + 'px');
+    this.renderer.setAttribute(this.ctx.canvas, 'height', wheelDiameter + 'px');
 
-        // Draw text
-        // ---------------------------------------------------
-        this.ctx.translate(radius, radius);
-        this.ctx.rotate(startingAngleRad + sliceAngleRad / 2);
-        this.ctx.textAlign = 'right';
-        this.ctx.fillStyle = '#fff';
-        this.ctx.font = 'bold 30px sans-serif';
-        this.ctx.fillText(item, radius - 10, 10);
+    let items = this.wheelService.items$.value;
 
-        this.ctx.restore();
-      });
+    if (items.length < 1) {
+      items = ['please add something'];
+    }
+    const numOfItems = items.length;
+    const diameter = this.ctx.canvas.width;
+    const radius = diameter / 2;
+    const sliceAngleRad = (2 * Math.PI) / numOfItems;
+    items.forEach((item, index) => {
+      const startingAngleRad = sliceAngleRad * index - sliceAngleRad / 2;
+      const endAngleRad = startingAngleRad + sliceAngleRad;
+      this.ctx.save();
+
+      // Draw a slice
+      // ---------------------------------------------------
+      this.ctx.beginPath();
+
+      // prevent the case where the last item added have the same
+      // color as the first item
+      if (index > 0 && index % this.colors.length === 0) {
+        this.ctx.fillStyle = '#bf0';
+      } else {
+        this.ctx.fillStyle = this.colors[index % this.colors.length];
+      }
+      // move cursor to center of circle
+      this.ctx.moveTo(radius, radius);
+      this.ctx.arc(radius, radius, radius, startingAngleRad, endAngleRad);
+      // move back to center
+      this.ctx.lineTo(radius, radius);
+      this.ctx.fill();
+
+      // Draw text
+      // ---------------------------------------------------
+      this.ctx.translate(radius, radius);
+      this.ctx.rotate(startingAngleRad + sliceAngleRad / 2);
+      this.ctx.textAlign = 'right';
+      this.ctx.fillStyle = '#fff';
+      this.ctx.font = 'bold 30px sans-serif';
+      this.ctx.fillText(item, radius - 10, 10);
+
+      this.ctx.restore();
     });
   }
 }

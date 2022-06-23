@@ -1,1 +1,11 @@
-<canvas id="wheel" #thewheel width="300px" height="300px"></canvas>
+<div class="wheel-container" #wheelcontainer>
+  <canvas
+    id="wheel"
+    #thewheel
+    [ngStyle]="{ transform: rotationDegCSS }"
+    (click)="rotate()"
+  ></canvas>
+  <div class="arrow">
+    <span class="pointer"></span>
+  </div>
+</div>

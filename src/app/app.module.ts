@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
@@ -22,6 +23,7 @@ import { WheelComponent } from './components/wheel/wheel.component';
     MatButtonModule,
     MatChipsModule,
     MatIconModule,
+    MatToolbarModule,
     BrowserAnimationsModule,
     FormsModule,
   ],
