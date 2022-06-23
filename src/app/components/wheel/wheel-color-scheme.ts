@@ -1,11 +1,11 @@
 export const NORMAL_SCHEME = [
-  '#f82',
-  '#0bf',
-  '#fb0',
-  '#0fb',
-  '#b0f',
-  '#f0b',
-  '#bf0',
+  '#6fd186',
+  '#ed8e09',
+  '#cf72d6',
+  '#ed1a8b',
+  '#a32c4a',
+  '#6f84d1',
+  '#f5cc27',
 ];
 
 export const S1_SCHEME = [
