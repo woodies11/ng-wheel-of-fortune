@@ -6,7 +6,10 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { WheelService } from 'src/app/services/wheel.service';
+import { ResultDialogComponent } from '../result-dialog/result-dialog.component';
 
 @Component({
   selector: 'app-wheel',
@@ -17,24 +20,41 @@ export class WheelComponent implements AfterViewInit {
   public rotationDegCSS = '0deg';
   public winningValue = '';
   private currentAngleDeg = 0;
+  private dialogDelayTimer: any;
 
   @ViewChild('thewheel') theWheelRef: ElementRef<HTMLCanvasElement>;
   @ViewChild('wheelcontainer') wheelContainerDevRef: ElementRef<HTMLDivElement>;
   private ctx: CanvasRenderingContext2D;
 
-  constructor(public wheelService: WheelService, private renderer: Renderer2) {}
+  constructor(
+    public wheelService: WheelService,
+    public matDialog: MatDialog,
+    private renderer: Renderer2,
+    private _snackBar: MatSnackBar
+  ) {}
 
   private colors = ['#f82', '#0bf', '#fb0', '#0fb', '#b0f', '#f0b'];
 
   rotate(): void {
     const numOfItems = this.wheelService.items$.value.length;
 
-    if (numOfItems < 2) {
+    if (numOfItems < 1) {
+      this._snackBar.open('Please add something to the wheel first.', '', {
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
       return;
     }
 
+    if (numOfItems === 1) {
+      this._snackBar.open(`Fine...`, '', {
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+    }
+
     const numberOfRotation = Math.floor(5 + 10 * Math.random());
-    const winningItemIndex = Math.floor(numOfItems * Math.random());
+    const winningItemIndex = this.wheelService.randomizeWinningIndex();
     const coef = this.currentAngleDeg > 0 ? -1 : 1;
     const meaninglessRotationDeg = coef * 360 * numberOfRotation;
     const sliceAngleDeg = 360 / numOfItems;
@@ -55,6 +75,12 @@ export class WheelComponent implements AfterViewInit {
       suspendRotation: suspendRotationDeg,
       sliceAngleDeg,
     });
+    if (this.dialogDelayTimer) {
+      clearTimeout(this.dialogDelayTimer);
+    }
+    this.dialogDelayTimer = setTimeout(() => {
+      this.matDialog.open(ResultDialogComponent);
+    }, 8200);
   }
 
   @HostListener('window:resize', ['$event'])
