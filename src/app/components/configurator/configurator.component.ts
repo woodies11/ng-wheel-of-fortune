@@ -36,9 +36,5 @@ export class ConfiguratorComponent implements OnInit {
     this.currentItemValue = '';
   }
 
-  public removeItem(index: number): void {
-    this.wheelService.removeItem(index);
-  }
-
   ngOnInit(): void {}
 }

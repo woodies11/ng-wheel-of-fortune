@@ -112,6 +112,11 @@ export class WheelService {
     this.removeItem(this.currentWinningIndex);
   }
 
+  public removeRecentlyRemovedItem(index: number): void {
+    this.recentlyRemovedItems.splice(index, 1);
+    this.recentlyRemovedItems$.next(this.recentlyRemovedItems);
+  }
+
   public addBackFromRecentlyRemoved(indexOfRecentlyRemovedArray: number): void {
     const toAddBack = this._recentlyRemovedItems.splice(
       indexOfRecentlyRemovedArray,

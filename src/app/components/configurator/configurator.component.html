@@ -31,7 +31,7 @@
         [disabled]="this.wheelService.isRotating"
         class="active-chips"
         *ngFor="let item of this.wheelService.items$ | async; let i = index"
-        (removed)="removeItem(i)"
+        (removed)="this.wheelService.removeItem(i)"
         >{{ item }}
         <mat-icon matChipRemove>cancel</mat-icon>
       </mat-chip>
@@ -95,7 +95,7 @@
             class="recently-removed-chips"
             *ngFor="let item of recentlyRemovedItems; let i = index"
             (click)="this.wheelService.addBackFromRecentlyRemoved(i)"
-            (removed)="removeItem(i)"
+            (removed)="this.wheelService.removeRecentlyRemovedItem(i)"
             >{{ item }}
             <mat-icon matChipRemove>cancel</mat-icon>
           </mat-chip>
