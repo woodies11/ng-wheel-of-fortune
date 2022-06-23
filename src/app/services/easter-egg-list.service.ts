@@ -9,6 +9,7 @@ import { WheelService } from './wheel.service';
 })
 export class EasterEggListService {
   private readonly SALT = 'fa02abf7a0361928';
+  private isFirstEvaluation = true;
 
   public shouldEnableS1$ = new BehaviorSubject(false);
 
@@ -27,9 +28,13 @@ export class EasterEggListService {
         })
       )
       .subscribe((allItems) => {
-        if (allItems.length > 10) {
+        if (
+          (!this.isFirstEvaluation && allItems.length > 10) ||
+          allItems.length > 30
+        ) {
           return;
         }
+        this.isFirstEvaluation = false;
 
         let matchCount = 0;
         allItems.forEach((item: string) => {

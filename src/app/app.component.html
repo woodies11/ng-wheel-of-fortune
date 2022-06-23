@@ -1,5 +1,8 @@
 <p>
-  <mat-toolbar color="primary">
+  <mat-toolbar
+    color="primary"
+    [ngClass]="{ 's1-header': this.easterEggListService.shouldEnableS1$.value }"
+  >
     <span>Wheeeeeeeel</span>
   </mat-toolbar>
 </p>
