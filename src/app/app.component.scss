@@ -1,12 +1,18 @@
 .main-container {
-  max-width: 1024px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 2em;
 }
 
 .content {
   display: grid;
-  grid-template-columns: 60% auto;
+  grid-template-columns: 1fr;
+}
+
+@media only screen and (min-width: 800px) {
+  .content {
+    grid-template-columns: 60% auto;
+  }
 }
 
 .s1-header {

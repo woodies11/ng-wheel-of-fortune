@@ -4,6 +4,9 @@
   cursor: pointer;
 }
 
+$arrowHeight: 2em;
+$arrowWidth: 3.5em;
+
 .wheel-container {
   position: relative;
   display: flex;
@@ -11,19 +14,19 @@
   align-items: center;
   .arrow {
     position: absolute;
-    height: 30px;
-    width: 50px;
+    height: $arrowHeight;
+    width: $arrowWidth;
     right: 5%;
     z-index: 500;
     display: block;
     top: 50%;
-    margin-top: -15px;
+    margin-top: (-$arrowHeight/2);
     transform-origin: center right;
     .pointer {
       z-index: 500;
       display: block;
-      height: 30px;
-      width: 50px;
+      height: $arrowHeight;
+      width: $arrowWidth;
 
       &:before {
         content: '';
@@ -34,7 +37,7 @@
         width: 0;
         height: 0;
         border-style: solid;
-        border-width: 0 0 15px 50px;
+        border-width: 0 0 ($arrowHeight/2) $arrowWidth;
         border-color: transparent transparent #c27028 transparent;
       }
       &:after {
@@ -46,7 +49,7 @@
         width: 0;
         height: 0;
         border-style: solid;
-        border-width: 0 50px 15px 0;
+        border-width: 0 $arrowWidth ($arrowHeight/2) 0;
         border-color: transparent #c27028 transparent transparent;
       }
     }
