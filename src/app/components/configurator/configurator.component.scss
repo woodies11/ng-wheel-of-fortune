@@ -30,3 +30,9 @@
 .recently-removed-list {
   margin: 1em 0;
 }
+
+.duration-config {
+  display: grid;
+  grid-template-columns: 1fr 5em;
+  gap: 1em;
+}

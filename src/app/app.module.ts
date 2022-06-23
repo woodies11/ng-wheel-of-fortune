@@ -6,6 +6,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
@@ -34,6 +35,7 @@ import { WheelComponent } from './components/wheel/wheel.component';
     MatToolbarModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatSliderModule,
     BrowserAnimationsModule,
     FormsModule,
   ],

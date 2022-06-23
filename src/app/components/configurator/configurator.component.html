@@ -1,10 +1,34 @@
 <div class="configurator-container">
   <mat-card>
     <mat-card-title>Configure</mat-card-title>
+    <h2>Spin Option:</h2>
+    <h3>Spin Duration</h3>
+    <div class="duration-config">
+      <mat-slider
+        [disabled]="this.wheelService.isRotating"
+        [max]="20"
+        [min]="1"
+        [step]="1"
+        [thumbLabel]="true"
+        [(ngModel)]="this.wheelService.spinDurationSeconds"
+        aria-labelledby="spinDuration"
+      >
+      </mat-slider>
+      <mat-form-field appearance="fill">
+        <mat-label>Seconds</mat-label>
+        <input
+          [disabled]="this.wheelService.isRotating"
+          matInput
+          type="number"
+          [(ngModel)]="this.wheelService.spinDurationSeconds"
+        />
+      </mat-form-field>
+    </div>
     <h2>Current List:</h2>
     <mat-chip-list #chipList>
       <mat-chip
         #chipList
+        [disabled]="this.wheelService.isRotating"
         class="active-chips"
         *ngFor="let item of this.wheelService.items$ | async; let i = index"
         (removed)="removeItem(i)"
@@ -19,17 +43,24 @@
         <mat-label>Value</mat-label>
         <input
           matInput
+          [disabled]="this.wheelService.isRotating"
           type="text"
           (keydown.enter)="addItem()"
           [(ngModel)]="currentItemValue"
         />
       </mat-form-field>
       <div class="btn-group">
-        <button mat-raised-button color="primary" (click)="addItem()">
+        <button
+          [disabled]="this.wheelService.isRotating"
+          mat-raised-button
+          color="primary"
+          (click)="addItem()"
+        >
           Add
         </button>
         <button
           *ngIf="!showRemoveAllConfirm"
+          [disabled]="this.wheelService.isRotating"
           mat-stroked-button
           color="warn"
           (click)="removeAllClicked()"
@@ -59,6 +90,7 @@
       <div class="recently-removed-list">
         <mat-chip-list #recentlyRemovedChipList>
           <mat-chip
+            [disabled]="this.wheelService.isRotating"
             #recentlyRemovedChipList
             class="recently-removed-chips"
             *ngFor="let item of recentlyRemovedItems; let i = index"
@@ -71,12 +103,18 @@
       </div>
       <div class="btn-group">
         <button
-          *ngIf="!showRemoveAllConfirm"
+          [disabled]="this.wheelService.isRotating"
+          mat-stroked-button
+          (click)="this.wheelService.addAllRecentlyRemovedBack()"
+        >
+          Add All Back
+        </button>
+        <button
           mat-stroked-button
           color="warn"
           (click)="this.wheelService.removeAllRecentlyRemoved()"
         >
-          Clear Recently Removed
+          Clear All
         </button>
       </div>
     </mat-card>
