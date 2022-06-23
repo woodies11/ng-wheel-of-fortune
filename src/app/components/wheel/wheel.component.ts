@@ -3,20 +3,24 @@ import {
   Component,
   ElementRef,
   HostListener,
+  OnInit,
   Renderer2,
   ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import confetti from 'canvas-confetti';
+import { debounceTime } from 'rxjs/operators';
+import { EasterEggListService } from 'src/app/services/easter-egg-list.service';
 import { WheelService } from 'src/app/services/wheel.service';
 import { ResultDialogComponent } from '../result-dialog/result-dialog.component';
+import { NORMAL_SCHEME, S1_SCHEME } from './wheel-color-scheme';
 @Component({
   selector: 'app-wheel',
   templateUrl: './wheel.component.html',
   styleUrls: ['./wheel.component.scss'],
 })
-export class WheelComponent implements AfterViewInit {
+export class WheelComponent implements OnInit, AfterViewInit {
   public rotationDegCSS = '0deg';
   public winningValue = '';
   private currentAngleDeg = 0;
@@ -29,14 +33,37 @@ export class WheelComponent implements AfterViewInit {
   @ViewChild('wheelcontainer') wheelContainerDevRef: ElementRef<HTMLDivElement>;
   private ctx: CanvasRenderingContext2D;
 
+  private _colors = NORMAL_SCHEME;
+  private get colors(): string[] {
+    return this._colors;
+  }
+  private set colors(v: string[]) {
+    if (this._colors === v) {
+      return;
+    }
+    this._colors = v;
+    this.redrawCanvas();
+  }
+
   constructor(
     public wheelService: WheelService,
     public matDialog: MatDialog,
     private renderer: Renderer2,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    public easterEggListService: EasterEggListService
   ) {}
 
-  private colors = ['#f82', '#0bf', '#fb0', '#0fb', '#b0f', '#f0b'];
+  ngOnInit(): void {
+    this.easterEggListService.shouldEnableS1$
+      .pipe(debounceTime(300))
+      .subscribe((v) => {
+        if (v) {
+          this.colors = S1_SCHEME;
+        } else {
+          this.colors = NORMAL_SCHEME;
+        }
+      });
+  }
 
   rotate(): void {
     const numOfItems = this.wheelService.items$.value.length;
@@ -188,10 +215,10 @@ export class WheelComponent implements AfterViewInit {
 
       // prevent the case where the last item added have the same
       // color as the first item
-      if (index > 0 && index % this.colors.length === 0) {
-        this.ctx.fillStyle = '#bf0';
+      if (index > 0 && index % (this.colors.length - 1) === 0) {
+        this.ctx.fillStyle = this.colors[this.colors.length - 1];
       } else {
-        this.ctx.fillStyle = this.colors[index % this.colors.length];
+        this.ctx.fillStyle = this.colors[index % (this.colors.length - 1)];
       }
       // move cursor to center of circle
       this.ctx.moveTo(radius, radius);
