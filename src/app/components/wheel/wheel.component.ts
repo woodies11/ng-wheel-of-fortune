@@ -21,6 +21,9 @@ export class WheelComponent implements AfterViewInit {
   public winningValue = '';
   private currentAngleDeg = 0;
   private dialogDelayTimer: any;
+  private numClickMidRotate = -1;
+  private easterEggMessageState = 0;
+  private easterEggTimer: any;
 
   @ViewChild('thewheel') theWheelRef: ElementRef<HTMLCanvasElement>;
   @ViewChild('wheelcontainer') wheelContainerDevRef: ElementRef<HTMLDivElement>;
@@ -39,18 +42,61 @@ export class WheelComponent implements AfterViewInit {
     const numOfItems = this.wheelService.items$.value.length;
 
     if (numOfItems < 1) {
-      this._snackBar.open('Please add something to the wheel first.', '', {
-        horizontalPosition: 'center',
-        verticalPosition: 'top',
-      });
+      this.displaySnackbar('Please add something to the wheel first.');
       return;
     }
 
     if (numOfItems === 1) {
-      this._snackBar.open(`Fine...`, '', {
-        horizontalPosition: 'center',
-        verticalPosition: 'top',
-      });
+      this.displaySnackbar('Fine...');
+    }
+
+    this.numClickMidRotate++;
+
+    if (this.easterEggTimer) {
+      clearInterval(this.easterEggTimer);
+    }
+    this.easterEggTimer = setInterval(() => {
+      this.numClickMidRotate = -1;
+    }, 1500);
+
+    if (this.numClickMidRotate === 5 && this.easterEggMessageState < 1) {
+      this.displaySnackbar('What are you doing?');
+      this.easterEggMessageState++;
+    }
+
+    if (this.numClickMidRotate === 30 && this.easterEggMessageState < 2) {
+      this.displaySnackbar('Stop!!!!');
+      this.easterEggMessageState++;
+    }
+
+    if (this.numClickMidRotate === 100 && this.easterEggMessageState < 3) {
+      this.displaySnackbar('Are you really that free????');
+      this.easterEggMessageState++;
+    }
+
+    if (this.numClickMidRotate === 300 && this.easterEggMessageState < 4) {
+      this.displaySnackbar('Happy now?????');
+      this.easterEggMessageState++;
+
+      const end = Date.now() + 10 * 1000;
+      const animate = () => {
+        confetti({
+          particleCount: 2,
+          angle: 60,
+          spread: 80,
+          origin: { x: 0 },
+        });
+        confetti({
+          particleCount: 2,
+          angle: 120,
+          spread: 80,
+          origin: { x: 1 },
+        });
+        if (Date.now() < end) {
+          requestAnimationFrame(animate);
+        }
+      };
+      animate();
     }
 
     this.wheelService.isRotating = true;
@@ -78,6 +124,7 @@ export class WheelComponent implements AfterViewInit {
     this.dialogDelayTimer = setTimeout(() => {
       this.matDialog.open(ResultDialogComponent);
       this.wheelService.isRotating = false;
+      this.numClickMidRotate = -1;
       confetti({
         particleCount: this.randomInRange(400, 800),
         spread: this.randomInRange(200, 500),
@@ -96,6 +143,14 @@ export class WheelComponent implements AfterViewInit {
     this.ctx = this.theWheelRef.nativeElement.getContext('2d');
     this.wheelService.items$.subscribe((items) => {
       this.redrawCanvas();
+    });
+  }
+
+  private displaySnackbar(message: string): void {
+    this._snackBar.open(message, '', {
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: 4000,
     });
   }
 
