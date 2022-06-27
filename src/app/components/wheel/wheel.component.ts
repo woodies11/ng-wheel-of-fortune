@@ -204,6 +204,7 @@ export class WheelComponent implements OnInit, AfterViewInit {
     const diameter = this.ctx.canvas.width;
     const radius = diameter / 2;
     const sliceAngleRad = (2 * Math.PI) / numOfItems;
+
     items.forEach((item, index) => {
       const startingAngleRad = sliceAngleRad * index - sliceAngleRad / 2;
       const endAngleRad = startingAngleRad + sliceAngleRad;
@@ -238,5 +239,15 @@ export class WheelComponent implements OnInit, AfterViewInit {
 
       this.ctx.restore();
     });
+
+    this.ctx.save();
+    this.ctx.beginPath();
+    this.ctx.fillStyle = '#fff';
+    this.ctx.shadowColor = '#000000ca';
+    this.ctx.shadowBlur = 8;
+    this.ctx.moveTo(radius, radius);
+    this.ctx.arc(radius, radius, 0.15 * radius, 0, 2 * Math.PI);
+    this.ctx.fill();
+    this.ctx.restore();
   }
 }
